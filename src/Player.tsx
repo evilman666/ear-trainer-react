@@ -62,7 +62,7 @@ const Player = (props: IPlayer): JSX.Element => {
   const [panner] = useState(new Tone.Panner(panning / 100).toDestination());
   const [synth] = useState(new Tone.PolySynth(Tone.Synth).connect(panner));
   const [midiNotes] = useState(generateMidiNotes());
-  const now = useRef(Tone.now());
+  //const now = useRef();
 
   useEffect(() => {
     //init
@@ -74,20 +74,20 @@ const Player = (props: IPlayer): JSX.Element => {
   useEffect(() => {
     console.log("note change?", playing, previousNote, note);
     if (playing && previousNote !== note) {
-      console.log("stop for note change", previousNote, now.current);
+      console.log("stop for note change", previousNote, Tone.now());
       const x: Frequency = previousNote as Frequency;
-      synth.triggerRelease(x, now.current + 1);
+      synth.triggerRelease(x, Tone.now() + 1);
       console.log("changing for note", note);
-      synth.triggerAttack(note, now.current + 1);
+      synth.triggerAttack(note, Tone.now() + 1);
     }
 
     if (props.playing && active && !playing) {
-      console.log("play", note, now.current);
-      synth.triggerAttack(note, now.current);
+      console.log("play", note, Tone.now());
+      synth.triggerAttack(note, Tone.now());
       setPlaying(true);
     } else if ((!props.playing || !active) && playing) {
-      console.log("stop", note, now.current);
-      synth.triggerRelease(note, now.current + 1);
+      console.log("stop", note, Tone.now());
+      synth.triggerRelease(note, Tone.now() + 1);
       setPlaying(false);
     }
   }, [props.playing, playing, note, previousNote, synth, active]);
@@ -99,7 +99,7 @@ const Player = (props: IPlayer): JSX.Element => {
 
   const handleChangePanning = (event: Event, newValue: number | number[]) => {
     setPanning(newValue as number);
-    panner.pan.setValueAtTime((newValue as number) / 100, now.current);
+    panner.pan.setValueAtTime((newValue as number) / 100, Tone.now());
     console.log("new panning", (newValue as number) / 100);
   };
 
